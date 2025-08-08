@@ -82,7 +82,6 @@ export const Compare = ({
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault();
       handleStart();
     },
     [handleStart]
@@ -90,7 +89,6 @@ export const Compare = ({
 
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
-      e.preventDefault();
       handleStart();
     },
     [handleStart]

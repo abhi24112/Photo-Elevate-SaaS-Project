@@ -17,6 +17,26 @@ export default function Upscale() {
   );
   const [isVisible, setIsVisible] = React.useState(false);
 
+  // Helper for ClipDrop fallback
+  const handleClipDropUpscale = async (imageFile: File) => {
+    const form = new FormData();
+    form.append("image_file", imageFile);
+    form.append("target_width", "2048");
+    form.append("target_height", "2048");
+
+    const response = await fetch("/api/users/clipdropupscale", {
+      method: "POST",
+      body: form,
+    });
+
+    if (!response.ok) {
+      throw new Error("ClipDrop upscaling failed");
+    }
+
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  };
+
   // Upscaling the images
   const handleScaling = async () => {
     if (!imageFile) {
@@ -24,7 +44,6 @@ export default function Upscale() {
       return;
     }
 
-    // creating form data for api call
     const formData = new FormData();
     formData.append("file", imageFile);
 
@@ -32,28 +51,38 @@ export default function Upscale() {
       setUpscaleLoading(true);
       setUpscaleErrorMsg(null);
 
+      // Try your local API first
       const response = await fetch("http://127.0.0.1:5000/upscale", {
         method: "POST",
         body: formData,
       });
 
-      console.log(response);
-
       if (!response.ok) {
-        const error = await response.json();
-        setUpscaleErrorMsg(error.error || "Upload failed");
-        setUpscaleLoading(false);
-        return;
+        // Try ClipDrop fallback
+        try {
+          const clipDropUrl = await handleClipDropUpscale(imageFile);
+          setUpscaleImgURL(clipDropUrl);
+          setUpscaleLoading(false);
+          return;
+        } catch (clipDropError) {
+          setUpscaleErrorMsg("Both upscaling services failed");
+          setUpscaleLoading(false);
+          return;
+        }
       }
 
       const blob = await response.blob();
-
       const imageURL = URL.createObjectURL(blob);
-
       setUpscaleImgURL(imageURL);
       setUpscaleLoading(false);
     } catch (error) {
-      setUpscaleErrorMsg("Error connecting to server.");
+      // If fetch itself fails (e.g., server down), try ClipDrop
+      try {
+        const clipDropUrl = await handleClipDropUpscale(imageFile);
+        setUpscaleImgURL(clipDropUrl);
+      } catch (clipDropError) {
+        setUpscaleErrorMsg("Both upscaling services failed");
+      }
       setUpscaleLoading(false);
     } finally {
       setUpscaleLoading(false);
@@ -70,9 +99,9 @@ export default function Upscale() {
       const timer = setTimeout(() => {
         setIsVisible(false);
         setUpscaleErrorMsg(""); // Clear the error message so it doesn't reappear
-      }, 5000); // 5000 milliseconds = 5 seconds
+      }, 5000);
 
-      return () => clearTimeout(timer); // Cleanup the timer
+      return () => clearTimeout(timer);
     }
   }, [errorUpscaleMsg]);
 
@@ -84,6 +113,7 @@ export default function Upscale() {
     } else {
       setOriginalImgURL(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageFile]);
 
   return (
