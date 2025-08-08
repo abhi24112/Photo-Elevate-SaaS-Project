@@ -21,7 +21,9 @@ export default function Upload() {
   // Image Drag and Drop
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    if (file) handleUpload(file, "/upscale");
+    if (file) {
+      handleUpload(file, "/upscale");
+    }
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -37,6 +39,10 @@ export default function Upload() {
       router.push("/login");
     }
   }, [choosedImage]);
+
+  React.useEffect(() => {
+    setUploadErrorMsg(errorMsg)
+  }, [errorMsg]);
 
   React.useEffect(() => {
     if (uploadErrorMsg) {

@@ -28,6 +28,8 @@ export const useHandleUpload = () => {
       return;
     }
 
+    sessionStorage.setItem("allowUpscale", "true");
+
     // Fetch initial credit BEFORE setting the file
     try {
       const response = await axios.post("/api/users/credits", { email });
