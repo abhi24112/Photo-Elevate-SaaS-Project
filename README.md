@@ -18,9 +18,9 @@
 
 ---
 
-## 🖼️ Demo
+## 🖼️ Work Demo
 
-![Demo Screenshot](public/mainImage.png)
+![Demo Screenshot](public/work.png)
 
 ---
 
