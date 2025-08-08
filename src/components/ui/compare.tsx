@@ -30,11 +30,11 @@ export const Compare = ({
   const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  // Debug: Log the image URLs
-  useEffect(() => {
-    console.log("Debug - First Image:", firstImage);
-    console.log("Debug - Second Image:", secondImage);
-  }, [firstImage, secondImage]);
+  // // Debug: Log the image URLs
+  // useEffect(() => {
+  //   console.log("Debug - First Image:", firstImage);
+  //   console.log("Debug - Second Image:", secondImage);
+  // }, [firstImage, secondImage]);
 
   const handleStart = useCallback(() => {
     setIsDragging(true);

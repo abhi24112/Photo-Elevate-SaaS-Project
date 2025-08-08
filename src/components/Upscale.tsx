@@ -37,6 +37,8 @@ export default function Upscale() {
         body: formData,
       });
 
+      console.log(response);
+
       if (!response.ok) {
         const error = await response.json();
         setUpscaleErrorMsg(error.error || "Upload failed");
@@ -63,16 +65,16 @@ export default function Upscale() {
   }, [errorMsg]);
 
   React.useEffect(() => {
-      if (errorUpscaleMsg) {
-        setIsVisible(true);
-        const timer = setTimeout(() => {
-          setIsVisible(false);
-          setUpscaleErrorMsg(""); // Clear the error message so it doesn't reappear
-        }, 5000); // 5000 milliseconds = 5 seconds
-  
-        return () => clearTimeout(timer); // Cleanup the timer
-      }
-    }, [errorUpscaleMsg]);
+    if (errorUpscaleMsg) {
+      setIsVisible(true);
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+        setUpscaleErrorMsg(""); // Clear the error message so it doesn't reappear
+      }, 5000); // 5000 milliseconds = 5 seconds
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [errorUpscaleMsg]);
 
   React.useEffect(() => {
     if (imageFile) {

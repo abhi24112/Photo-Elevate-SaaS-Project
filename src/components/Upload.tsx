@@ -12,7 +12,9 @@ export default function Upload() {
   const { handleUpload, loading, errorMsg } = useHandleUpload();
   const email = useUserDetail((state) => state.email);
   const [choosedImage, setImageChoosed] = React.useState(false);
-  const [uploadErrorMsg, setUploadErrorMsg] = React.useState<string | null>(null);
+  const [uploadErrorMsg, setUploadErrorMsg] = React.useState<string | null>(
+    null
+  );
   const [isVisible, setIsVisible] = React.useState(false);
 
   // user logged in status
@@ -41,7 +43,7 @@ export default function Upload() {
   }, [choosedImage]);
 
   React.useEffect(() => {
-    setUploadErrorMsg(errorMsg)
+    setUploadErrorMsg(errorMsg);
   }, [errorMsg]);
 
   React.useEffect(() => {
@@ -64,7 +66,8 @@ export default function Upload() {
           alt="blur to clean image"
           width={530}
           height={285}
-          className="rounded-2xl"
+          className="rounded-2xl w-auto h-auto"
+          priority={false}
         />
         <div className="flex flex-col justify-center items-center gap-y-5">
           <h1 className="text-3xl font-semibold tracking-wide text-center">
@@ -111,7 +114,7 @@ export default function Upload() {
                 onChange={(e) => {
                   const file = e.target.files?.[0] || null;
                   if (file) handleUpload(file, "/upscale");
-                  setImageChoosed(true)
+                  setImageChoosed(true);
                 }}
               />
             </label>
