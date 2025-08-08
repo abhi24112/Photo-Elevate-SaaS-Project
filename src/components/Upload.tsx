@@ -39,6 +39,10 @@ export default function Upload() {
   }, [choosedImage]);
 
   React.useEffect(() => {
+    setUploadErrorMsg(errorMsg)
+  }, [errorMsg]);
+
+  React.useEffect(() => {
     if (uploadErrorMsg) {
       setIsVisible(true);
       const timer = setTimeout(() => {

@@ -15,6 +15,7 @@ export default function Upscale() {
   const [errorUpscaleMsg, setUpscaleErrorMsg] = React.useState<string | null>(
     null
   );
+  const [isVisible, setIsVisible] = React.useState(false);
 
   // Upscaling the images
   const handleScaling = async () => {
@@ -56,6 +57,22 @@ export default function Upscale() {
       setUpscaleLoading(false);
     }
   };
+
+  React.useEffect(() => {
+    setUpscaleErrorMsg(errorMsg);
+  }, [errorMsg]);
+
+  React.useEffect(() => {
+      if (errorUpscaleMsg) {
+        setIsVisible(true);
+        const timer = setTimeout(() => {
+          setIsVisible(false);
+          setUpscaleErrorMsg(""); // Clear the error message so it doesn't reappear
+        }, 5000); // 5000 milliseconds = 5 seconds
+  
+        return () => clearTimeout(timer); // Cleanup the timer
+      }
+    }, [errorUpscaleMsg]);
 
   React.useEffect(() => {
     if (imageFile) {
@@ -203,6 +220,29 @@ export default function Upscale() {
           )}
         </div>
       </div>
+      {isVisible && (
+        <div
+          className={`absolute z-50 transition-all duration-500 ease-in-out ${
+            isVisible ? "top-5" : "-top-100"
+          }`}
+        >
+          <div className="bg-red-700 text-white rounded-xl shadow-lg px-10 tracking-wider py-4 flex items-center space-x-3">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span className="text-sm font-medium">{errorUpscaleMsg}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
