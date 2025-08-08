@@ -196,7 +196,7 @@ export const ModernNavbar = () => {
                     onClick={logout}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="hidden md:block w-full bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600"
+                    className="hidden md:block w-full bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600 cursor-pointer"
                   >
                     Logout
                   </motion.button>
