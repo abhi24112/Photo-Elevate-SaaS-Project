@@ -69,6 +69,7 @@ export const ModernNavbar = () => {
     { name: "Home", href: "/#home" },
     { name: "Guide", href: "/#guide" },
     { name: "Sample", href: "/#sample" },
+    { name: "Buy Credits", href: "/#purchase" },
     { name: "Contact", href: "/#contact" },
     // {
     //   name: "Services",
@@ -102,65 +103,23 @@ export const ModernNavbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
-              {navItems.map((item) => (
-                <div
-                  key={item.name}
-                  className="relative"
-                  // onMouseEnter={() =>
-                  //   item.dropdown && setActiveDropdown(item.name)
-                  // }
-                >
-                  <motion.a
-                    href={item.href}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center"
-                  >
-                    {item.name}
-                    {/* {item.dropdown && (
-                      <svg
-                        className="w-4 h-4 ml-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    )} */}
-                  </motion.a>
-
-                  {/* Dropdown Menu */}
-                  {/* <AnimatePresence>
-                    {item.dropdown && activeDropdown === item.name && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700"
-                      >
-                        {item.dropdown.map((dropdownItem) => (
-                          <motion.a
-                            key={dropdownItem.name}
-                            href={dropdownItem.href}
-                            whileHover={{
-                              backgroundColor: "rgba(59, 130, 246, 0.1)",
-                            }}
-                            className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 first:rounded-t-md last:rounded-b-md"
-                          >
-                            {dropdownItem.name}
-                          </motion.a>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence> */}
-                </div>
-              ))}
+              {navItems.map((item) => {
+                if (item.name === "Buy Credits" && !isLoggedIn) {
+                  return null; // Hide Buy Credits if not logged in
+                }
+                return (
+                  <div key={item.name} className="relative">
+                    <motion.a
+                      href={item.href}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center"
+                    >
+                      {item.name}
+                    </motion.a>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -175,7 +134,7 @@ export const ModernNavbar = () => {
                     whileTap={{ scale: 0.95 }}
                     className=" w-30 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
                   >
-                    Credits: {credits}/5
+                    Credits: {credits} left
                   </motion.button>
                 </div>
                 {status === "authenticated" ? (

@@ -3,7 +3,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useUserDetail } from "@/store/userDetailStore";
-import Link from "next/link";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -12,8 +11,6 @@ export default function ProfilePage() {
     email: useUserDetail((state) => state.email),
     credits: useUserDetail((state) => state.credits),
   };
-
-  console.log(data);
 
   // logour the user
   const logout = async () => {
