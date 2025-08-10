@@ -69,7 +69,7 @@ export const ModernNavbar = () => {
     { name: "Home", href: "/#home" },
     { name: "Guide", href: "/#guide" },
     { name: "Sample", href: "/#sample" },
-    { name: "Buy Credits", href: "/#purchase" },
+    { name: "Buy Credits", href: "/purchase" },
     { name: "Contact", href: "/#contact" },
     // {
     //   name: "Services",
@@ -132,7 +132,7 @@ export const ModernNavbar = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className=" w-30 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
+                    className=" w-35 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
                   >
                     Credits: {credits} left
                   </motion.button>
