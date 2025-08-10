@@ -41,9 +41,9 @@ export default function LoginPage() {
 
       if (responseUserData) {
         // Storing in the global state using zustand
-        if (setUsername) setUsername(responseUserData.username);
-        if (setEmail) setEmail(responseUserData.email);
-        if (setCredits) setCredits(responseUserData.credits);
+        setUsername(responseUserData.username);
+        setEmail(responseUserData.email);
+        setCredits(responseUserData.credits);
       }
 
       console.log(responseData.success);
@@ -56,8 +56,10 @@ export default function LoginPage() {
       if (responseData.success) {
         router.push("/");
       }
-    } catch (error: any) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An error occurred";
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     } finally {
       setLoading(false);
     }

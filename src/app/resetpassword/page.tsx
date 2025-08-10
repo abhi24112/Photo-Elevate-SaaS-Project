@@ -18,20 +18,23 @@ export default function ResetPassword() {
   const HandleUserandEndpoint = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("/api/users/resetpassword", {
+      await axios.post("/api/users/resetpassword", {
         password,
         token,
       });
-      console.log(response);
       setTimer(true);
 
       setTimeout(() => {
         router.push("/login");
         setTimer(false);
       }, 3000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
-      console.log(error.response.data);
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+      } else {
+        console.log(error);
+      }
     } finally {
       setLoading(false);
     }
@@ -44,11 +47,15 @@ export default function ResetPassword() {
       router.push("/forgotpassword");
     }
     setToken(urlToken || "");
-  }, []);
+  }, [router]);
 
   // for disabling the button if both passwords are not equal
   React.useEffect(() => {
-    if (password.length > 0 && confirmPass.length > 0 && password == confirmPass) {
+    if (
+      password.length > 0 &&
+      confirmPass.length > 0 &&
+      password == confirmPass
+    ) {
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
@@ -161,7 +168,6 @@ export default function ResetPassword() {
                     className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     required
                   />
-        
                 </div>
               </div>
 

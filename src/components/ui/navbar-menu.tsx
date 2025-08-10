@@ -36,7 +36,7 @@ export const ModernNavbar = () => {
       }
 
       setMessage("Logout SuccessFully");
-    } catch (error) {
+    } catch{
       setMessage("Logout is not Successful");
     }
   };

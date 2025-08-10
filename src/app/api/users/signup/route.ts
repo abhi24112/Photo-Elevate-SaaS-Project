@@ -5,8 +5,8 @@ import bcryptjs from "bcryptjs";
 import { sendEmail } from "@/helper/mailer";
 
 export async function POST(request: NextRequest) {
-    try {
-      await connect();
+  try {
+    await connect();
     const reqBody = await request.json();
     const { username, email, password } = reqBody;
 
@@ -34,9 +34,10 @@ export async function POST(request: NextRequest) {
 
     // send verification email
     sendEmail({
-            email, emailType: "VERIFY",
-            userId: savedUser._id
-        })
+      email,
+      emailType: "VERIFY",
+      userId: savedUser._id,
+    });
 
     // const savedUser = await newUser.save();
     // console.log(savedUser);
@@ -46,8 +47,9 @@ export async function POST(request: NextRequest) {
       success: true,
       savedUser,
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "An error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
 }
-

@@ -26,7 +26,7 @@ export default function ForgotPassword() {
         setResponseMessage(responseData.message);
         setResult(false);
       }
-    } catch (error) {
+    } catch{
       console.log("Enter correct Email. Or try again later.");
     } finally {
       setLoading(false);

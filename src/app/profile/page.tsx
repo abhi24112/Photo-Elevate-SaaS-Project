@@ -26,7 +26,7 @@ export default function ProfilePage() {
       if (responseData.success) {
         router.push("/login");
       }
-    } catch (error) {
+    } catch{
       console.log("Logout is not successful");
     }
   };

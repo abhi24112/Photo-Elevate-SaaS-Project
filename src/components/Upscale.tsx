@@ -64,7 +64,7 @@ export default function Upscale() {
           setUpscaleImgURL(clipDropUrl);
           setUpscaleLoading(false);
           return;
-        } catch (clipDropError) {
+        } catch {
           setUpscaleErrorMsg("Both upscaling services failed");
           setUpscaleLoading(false);
           return;
@@ -75,12 +75,12 @@ export default function Upscale() {
       const imageURL = URL.createObjectURL(blob);
       setUpscaleImgURL(imageURL);
       setUpscaleLoading(false);
-    } catch (error) {
+    } catch{
       // If fetch itself fails (e.g., server down), try ClipDrop
       try {
         const clipDropUrl = await handleClipDropUpscale(imageFile);
         setUpscaleImgURL(clipDropUrl);
-      } catch (clipDropError) {
+      } catch {
         setUpscaleErrorMsg("Both upscaling services failed");
       }
       setUpscaleLoading(false);

@@ -1,7 +1,7 @@
 import { connect } from "@/dbConfig/dbConfig";
 import User from "@/model/userModel";
 
-export const creditFeching = async (email: String) => {
+export const creditFeching = async (email: string) => {
   try {
     await connect();
 
@@ -9,7 +9,7 @@ export const creditFeching = async (email: String) => {
     const credits = user.credits
     return credits;
 
-  } catch (error: any) {
-    throw new Error("Failed to fetch credits", error);
+  } catch (error: unknown) {
+    throw new Error("Failed to fetch credits");
   }
 };

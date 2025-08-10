@@ -2,31 +2,34 @@ import { connect } from "@/dbConfig/dbConfig";
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/model/userModel";
 
+export async function POST(request: NextRequest) {
+  try {
+    await connect();
 
-export async function POST(request: NextRequest){
-    try {
-        await connect();
+    const reqBody = await request.json();
+    const { token } = reqBody;
 
-        const reqBody = await request.json()
-        const {token} = reqBody
+    const user = await User.findOne({
+      verifyToken: token,
+      verifyTokenExpiry: { $gt: Date.now() },
+    });
 
-        const user = await User.findOne({verifyToken: token, verifyTokenExpiry: {$gt: Date.now()}});
-
-        if(!user){
-            return NextResponse.json({error: "Invalid token"}, {status: 400})
-        }
-
-        user.isVerified = true;
-        user.verifyToken = undefined;
-        user.verifyTokenExpiry = undefined;
-        await user.save();
-
-        return NextResponse.json({
-            message: "Email verified successfully",
-            success: true
-        })
-        
-    } catch (error: any) {
-        return NextResponse.json({error: error.message}, {status: 400})
+    if (!user) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 400 });
     }
+
+    user.isVerified = true;
+    user.verifyToken = undefined;
+    user.verifyTokenExpiry = undefined;
+    await user.save();
+
+    return NextResponse.json({
+      message: "Email verified successfully",
+      success: true,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "An error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 400 });
+  }
 }

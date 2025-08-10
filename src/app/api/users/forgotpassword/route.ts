@@ -8,7 +8,6 @@ export async function POST(request: NextRequest){
         await connect()
 
         const response = await request.json()
-        console.log(response);
         const reqBody = response.user
         const {email} = reqBody
         
@@ -29,9 +28,10 @@ export async function POST(request: NextRequest){
             success: true
         })
 
-    } catch (error) {
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "Please enter correct email";
         return NextResponse.json({
-            message: "Please enter correct email",
+            message: errorMessage,
             success: false
         })        
     }

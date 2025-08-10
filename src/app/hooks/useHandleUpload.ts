@@ -38,7 +38,7 @@ export const useHandleUpload = () => {
         setLoading(false);
         return;
       }
-    } catch (error) {
+    } catch{
       console.log("Credit check failed");
       setLoading(false);
       return;
@@ -53,7 +53,7 @@ export const useHandleUpload = () => {
       setErrorMsg(null);
       router.push(redirectRoute);
       router.refresh();
-    } catch (error) {
+    } catch{
       console.log("Updating of credits failed");
       setErrorMsg("Failed to process upload");
     }

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Spinner from "@/components/ui/Spinner";
 import SignInBtn from "@/components/sign-in";
-import { IconMail, IconBrandGoogle } from "@tabler/icons-react";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -21,12 +20,11 @@ export default function SignUpPage() {
   const onSignup = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("/api/users/signup", user);
-      console.log("Signup success", response.data);
+      await axios.post("/api/users/signup", user);
       // after signup automatically go to login
       router.push("/login");
-    } catch (error: any) {
-      console.log("SignUp failed", error.message);
+    } catch {
+      console.log("SignUp failed");
     } finally {
       setLoading(false);
     }
