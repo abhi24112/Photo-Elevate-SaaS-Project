@@ -51,8 +51,7 @@ export default function LoginPage() {
         setResult(false);
         setResultMessage(responseData.message);
       }
-
-      console.log(responseData.success);
+;
       if (responseData.success) {
         router.push("/");
       }
@@ -69,7 +68,7 @@ export default function LoginPage() {
     if (status === "authenticated" && session?.user?.email) {
       setUser((prev) => ({
         ...prev,
-        email: session?.user?.email!,
+        email: session?.user?.email || "",
         isGoogleAuth: true,
       }));
     }

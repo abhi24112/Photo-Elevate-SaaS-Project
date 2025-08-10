@@ -100,8 +100,8 @@ export default function CreditPurchase() {
       </div>
 
       {/* Overlay for development mode */}
-      <div className="absolute inset-0 bg-black bg-opacity-40 z-10 pointer-events-none"></div>
-      <div className="flex flex-col lg:flex-row lg:items-stretch justify-center gap-8 w-full max-w-5xl relative z-15">
+      <div className="relative inset-0 bg-black bg-opacity-40 z-10 pointer-events-none"></div>
+      <div className="flex flex-col lg:flex-row lg:items-stretch justify-center gap-8 w-full max-w-5xl relative z-15 mt-20">
         {creditPackages.map((pkg) => (
           <div key={pkg.id} className={pkg.cardStyle}>
             <div className="mb-5">

@@ -36,7 +36,7 @@ export const ModernNavbar = () => {
       }
 
       setMessage("Logout SuccessFully");
-    } catch{
+    } catch {
       setMessage("Logout is not Successful");
     }
   };
@@ -101,7 +101,7 @@ export const ModernNavbar = () => {
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <div className="ml-10 flex items-baseline space-x-4">
               {navItems.map((item) => {
                 if (item.name === "Buy Credits" && !isLoggedIn) {
@@ -128,7 +128,7 @@ export const ModernNavbar = () => {
             {isLoggedIn ? (
               // Logged in user buttons
               <>
-                <div className="md:block hidden">
+                <div className="lg:block hidden">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -144,7 +144,7 @@ export const ModernNavbar = () => {
                   >
                     <Image
                       className="rounded-full"
-                      src={session?.user?.image!}
+                      src={session?.user?.image || "/default-avatar.png"}
                       width={35}
                       height={35}
                       alt="Avatar"
@@ -155,7 +155,7 @@ export const ModernNavbar = () => {
                     onClick={logout}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="hidden md:block w-full bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600 cursor-pointer"
+                    className="hidden lg:block w-full bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600 cursor-pointer"
                   >
                     Logout
                   </motion.button>
@@ -171,7 +171,7 @@ export const ModernNavbar = () => {
                       <div className="flex items-center gap-3 mb-3">
                         <Image
                           className="rounded-full"
-                          src={session?.user?.image!}
+                          src={session?.user?.image || "/default-avatar.png"}
                           width={50}
                           height={50}
                           alt="Avatar"
@@ -227,7 +227,7 @@ export const ModernNavbar = () => {
             )}
 
             {/* Mobile menu button */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
@@ -269,7 +269,7 @@ export const ModernNavbar = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.1 }}
-            className="absolute md:hidden bg-white dark:bg-gray-900 border-1 border-gray-200 dark:border-gray-700 w-1/2 right-3 top-15 rounded-2xl p-3"
+            className="absolute lg:hidden bg-white dark:bg-gray-900 border-1 border-gray-200 dark:border-gray-700 w-1/2 right-3 top-15 rounded-2xl p-3"
           >
             <div className="px-2 pt-2 pb-3 space-y-1 ">
               {navItems.map((item) => (
@@ -302,14 +302,23 @@ export const ModernNavbar = () => {
                 </div>
               ) : (
                 status !== "authenticated" && (
-                  <motion.button
-                    onClick={logout}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600"
-                  >
-                    Logout
-                  </motion.button>
+                  <>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className=" w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
+                    >
+                      Credits: {credits} left
+                    </motion.button>
+                    <motion.button
+                      onClick={logout}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600"
+                    >
+                      Logout
+                    </motion.button>
+                  </>
                 )
               )}
             </div>

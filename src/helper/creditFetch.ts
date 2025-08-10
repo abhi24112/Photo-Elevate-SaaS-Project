@@ -9,7 +9,7 @@ export const creditFeching = async (email: string) => {
     const credits = user.credits
     return credits;
 
-  } catch (error: unknown) {
+  } catch{
     throw new Error("Failed to fetch credits");
   }
 };
