@@ -10,7 +10,7 @@ function Footer() {
         <div className='mx-2 lg:mx-5'>|</div>
         <div className='flex gap-x-2'><IconBrandLinkedin/><Link href="https://www.linkedin.com/in/abhishek9910/">LinkedIn</Link></div>
         <div className='mx-2 lg:mx-5'>|</div>
-        <div><Link href="https://github.com/abhi24112">Copyright &copy; 2025 Abhishek Prajapati</Link></div>
+        <div><Link href="https://github.com/abhi24112">Copyright &copy; 2025 Photo Elevate</Link></div>
     </div>
   )
 }

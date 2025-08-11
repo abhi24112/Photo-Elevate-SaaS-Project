@@ -4,12 +4,9 @@ import React from "react";
 
 function page() {
   return (
-    <div>
-      <ModernNavbar />
       <div id="home" className="mt-20">
         <CreditPurchase />
       </div>
-    </div>
   );
 }
 

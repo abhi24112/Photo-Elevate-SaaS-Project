@@ -28,36 +28,38 @@ export const useHandleUpload = () => {
       return;
     }
 
-    // Fetch initial credit BEFORE setting the file
-    try {
-      const response = await axios.post("/api/users/credits", { email });
-      const currentCredits = response.data.credits;
+    if (email) {
+      // Fetch initial credit BEFORE setting the file
+      try {
+        const response = await axios.post("/api/users/credits", { email });
+        const currentCredits = response.data.credits;
 
-      if (currentCredits <= 0) {
-        setErrorMsg("You don't have enough credits");
+        if (currentCredits <= 0) {
+          setErrorMsg("You don't have enough credits");
+          setLoading(false);
+          return;
+        }
+      } catch {
+        console.log("Credit check failed");
         setLoading(false);
         return;
       }
-    } catch{
-      console.log("Credit check failed");
-      setLoading(false);
-      return;
+
+      // Only set the file after all validations pass
+      setImageFile(file);
+
+      // Update credits and redirect
+      try {
+        await axios.post("/api/users/creditupdate", { email });
+        setErrorMsg(null);
+        router.push(redirectRoute);
+        router.refresh();
+      } catch {
+        console.log("Updating of credits failed");
+        setErrorMsg("Failed to process upload");
+      }
+
     }
-
-    // Only set the file after all validations pass
-    setImageFile(file);
-
-    // Update credits and redirect
-    try {
-      await axios.post("/api/users/creditupdate", { email });
-      setErrorMsg(null);
-      router.push(redirectRoute);
-      router.refresh();
-    } catch{
-      console.log("Updating of credits failed");
-      setErrorMsg("Failed to process upload");
-    }
-
     setLoading(false);
   };
 

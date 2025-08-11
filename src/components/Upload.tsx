@@ -36,12 +36,7 @@ export default function Upload() {
     multiple: false,
   });
 
-  React.useEffect(() => {
-    if (!isLoggedIn && choosedImage) {
-      router.push("/login");
-    }
-  }, [choosedImage]);
-
+  
   React.useEffect(() => {
     setUploadErrorMsg(errorMsg);
   }, [errorMsg]);
@@ -53,10 +48,16 @@ export default function Upload() {
         setIsVisible(false);
         setUploadErrorMsg(""); // Clear the error message so it doesn't reappear
       }, 5000); // 5000 milliseconds = 5 seconds
-
+      
       return () => clearTimeout(timer); // Cleanup the timer
     }
   }, [uploadErrorMsg]);
+
+  React.useEffect(() => {
+    if (!isLoggedIn && choosedImage) {
+      router.push("/login");
+    }
+  }, [choosedImage]);
 
   return (
     <div className="px-4">
@@ -81,7 +82,7 @@ export default function Upload() {
           {/* Drag and Drop Zone */}
           {/* Normal File Upload */}
           <div className="w-full">
-            <label className="md:hidden bg-gradient-to-r from-blue-600 to-purple-600 text-white w-full text-center px-5 py-3 mb-2 rounded-md text-md tracking-wider font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md cursor-pointer block">
+            <label className="md:hidden bg-gradient-to-r from-blue-600 to-purple-600 text-white w-full text-center px-5 py-3 mb-2 rounded-2xl text-md tracking-wider font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md cursor-pointer block">
               <div className="flex justify-center gap-3 items-center">
                 {loading && (
                   <svg
@@ -128,6 +129,7 @@ export default function Upload() {
               {...getInputProps()}
               onChange={(e) => {
                 const file = e.target.files?.[0] || null;
+                setImageChoosed(true);
                 if (file) handleUpload(file, "/upscale");
               }}
             />
@@ -138,7 +140,7 @@ export default function Upload() {
               </p>
             ) : (
               <>
-                <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-3 mb-2 rounded-md text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md">
+                <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-7 py-3 mb-2 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md">
                   {loading ? "Uploading..." : "Upscale Image"}
                 </button>
                 <p className="text-md text-gray-700">

@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
 
     credits: {
         type:Number,
-        default: 3
+        default: 2
     },
     lastCreditReset:{
         type:Date,

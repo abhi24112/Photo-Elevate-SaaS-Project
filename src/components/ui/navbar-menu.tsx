@@ -91,13 +91,21 @@ export const ModernNavbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <motion.div whileHover={{ scale: 1.05 }} className="flex-shrink-0">
-            <Link
-              className="text-lg sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
-              href="/"
-            >
-              Photo Elevate
-            </Link>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex justify-center md:items-end lg:items-end"
+          >
+            <div className="w-7 md:w-10 lg:w-13">
+              <Image src={"/logo.svg"} alt="logo" height={55} width={55} />
+            </div>
+            <div>
+              <Link
+                className="text-lg sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent"
+                href="/"
+              >
+                Photo Elevate
+              </Link>
+            </div>
           </motion.div>
 
           {/* Desktop Navigation */}
@@ -113,7 +121,7 @@ export const ModernNavbar = () => {
                       href={item.href}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center"
+                      className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-2xl text-sm font-medium transition-colors duration-200 flex items-center"
                     >
                       {item.name}
                     </motion.a>
@@ -132,7 +140,7 @@ export const ModernNavbar = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className=" w-35 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
+                    className=" w-35 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-2xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
                   >
                     Credits: {credits} left
                   </motion.button>
@@ -155,7 +163,7 @@ export const ModernNavbar = () => {
                     onClick={logout}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="hidden lg:block w-full bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600 cursor-pointer"
+                    className="hidden lg:block w-full bg-red-500 text-white px-4 py-2 rounded-2xl text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600 cursor-pointer"
                   >
                     Logout
                   </motion.button>
@@ -188,7 +196,7 @@ export const ModernNavbar = () => {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="md:hidden w-full mb-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1.5 rounded-md text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
+                        className="md:hidden w-full mb-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1.5 rounded-2xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
                       >
                         Credits: {credits}/5
                       </motion.button>
@@ -196,7 +204,7 @@ export const ModernNavbar = () => {
                         onClick={logout}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600"
+                        className="w-full bg-red-500 text-white px-4 py-2 rounded-2xl text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600"
                       >
                         Logout
                       </motion.button>
@@ -206,12 +214,12 @@ export const ModernNavbar = () => {
               </>
             ) : (
               // Not logged in user buttons
-              <div className="md:gap-4 justify-center items-center hidden md:flex">
+              <div className="md:gap-4 justify-center items-center hidden lg:flex">
                 <motion.a
                   href="/login"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-all duration-200 shadow-md"
+                  className="bg-blue-500 text-white px-4 py-2 rounded-2xl text-md font-semibold hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-white"
                 >
                   Login
                 </motion.a>
@@ -219,22 +227,22 @@ export const ModernNavbar = () => {
                   href="/signup"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-all duration-200 shadow-md"
+                  className="bg-white text-black px-4 py-2 rounded-2xl text-md font-semibold  transition-all duration-200 shadow-sm hover:shadow-gray-300"
                 >
-                  Sign Up
+                  Signup
                 </motion.a>
               </div>
             )}
 
             {/* Mobile menu button */}
-            <div className="lg:hidden">
+            <div className="lg:hidden px-2 py-1 border-1 border-dashed border-gray-600 flex justify-center items-center rounded-lg">
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
               >
                 <svg
-                  className="h-6 w-6"
+                  className="h-6 w-6 text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -286,16 +294,16 @@ export const ModernNavbar = () => {
 
               {/* Mobile Auth Buttons */}
               {!isLoggedIn ? (
-                <div className="pt-4 space-y-2">
+                <div className="pt-4 space-y-2 ">
                   <a
                     href="/login"
-                    className="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium"
+                    className="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm font-medium"
                   >
                     Login
                   </a>
                   <a
                     href="/signup"
-                    className="block w-full text-center bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium"
+                    className="block w-full text-center bg-green-600 text-white px-4 py-2 rounded-2xl text-sm font-medium"
                   >
                     Sign Up
                   </a>
@@ -306,7 +314,7 @@ export const ModernNavbar = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className=" w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
+                      className=" w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-2xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
                     >
                       Credits: {credits} left
                     </motion.button>
@@ -314,7 +322,7 @@ export const ModernNavbar = () => {
                       onClick={logout}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600"
+                      className="w-full bg-red-500 text-white px-4 py-2 rounded-2xl text-sm font-medium transition-all duration-200 shadow-sm hover:bg-red-600"
                     >
                       Logout
                     </motion.button>

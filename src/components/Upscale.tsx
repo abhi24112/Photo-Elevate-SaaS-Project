@@ -11,18 +11,70 @@ export default function Upscale() {
   const [originalImgURL, setOriginalImgURL] = React.useState<string | null>(
     null
   );
+  const [originalImgDimensions, setOriginalImgDimensions] = React.useState<{
+    width: number;
+    height: number;
+  } | null>(null);
   const [upscaleLoading, setUpscaleLoading] = React.useState<boolean>(false);
+  const [upscaleImgDimensions, setUpscaleImgDimensions] = React.useState<{
+    width: number;
+    height: number;
+  } | null>(null);
   const [errorUpscaleMsg, setUpscaleErrorMsg] = React.useState<string | null>(
     null
   );
   const [isVisible, setIsVisible] = React.useState(false);
+  const [width, setwidth] = React.useState<number | null>(null);
+  const [height, setheight] = React.useState<number | null>(null);
 
-  // Helper for ClipDrop fallback
+  // Helper for ClipDrop fallback (ClipDrop's limits (between 1-4096 pixels):
   const handleClipDropUpscale = async (imageFile: File) => {
     const form = new FormData();
     form.append("image_file", imageFile);
-    form.append("target_width", "2048");
-    form.append("target_height", "2048");
+
+    console.log("Original dimensions:", originalImgDimensions); // Debug if this is null
+
+    if (originalImgDimensions) {
+      // Calculate target dimensions (4x scaling)
+      let targetWidth = originalImgDimensions.width * 4;
+      let targetHeight = originalImgDimensions.height * 4;
+
+      // Preserve aspect ratio if either dimension exceeds 4096
+      if (targetWidth > 4096 || targetHeight > 4096) {
+        const aspectRatio =
+          originalImgDimensions.width / originalImgDimensions.height;
+
+        if (targetWidth > targetHeight) {
+          // Width is the limiting dimension
+          targetWidth = 4096;
+          targetHeight = Math.round(targetWidth / aspectRatio);
+        } else {
+          // Height is the limiting dimension
+          targetHeight = 4096;
+          targetWidth = Math.round(targetHeight * aspectRatio);
+        }
+      }
+
+      // Ensure minimum size of 1
+      targetWidth = Math.max(targetWidth, 1);
+      targetHeight = Math.max(targetHeight, 1);
+
+      console.log(`Calculated dimensions: ${targetWidth}×${targetHeight}`);
+
+      // Add dimensions to form
+      form.append("target_width", targetWidth.toString());
+      form.append("target_height", targetHeight.toString());
+
+      // Verify they were added correctly
+      console.log("FormData check:", {
+        width: form.get("target_width"),
+        height: form.get("target_height"),
+      });
+
+      // Update state for display
+      setwidth(targetWidth);
+      setheight(targetHeight);
+    }
 
     const response = await fetch("/api/users/clipdropupscale", {
       method: "POST",
@@ -75,7 +127,7 @@ export default function Upscale() {
       const imageURL = URL.createObjectURL(blob);
       setUpscaleImgURL(imageURL);
       setUpscaleLoading(false);
-    } catch{
+    } catch {
       // If fetch itself fails (e.g., server down), try ClipDrop
       try {
         const clipDropUrl = await handleClipDropUpscale(imageFile);
@@ -88,6 +140,44 @@ export default function Upscale() {
       setUpscaleLoading(false);
     }
   };
+
+  React.useEffect(() => {
+    if (imageFile) {
+      const url = URL.createObjectURL(imageFile);
+      setOriginalImgURL(url);
+
+      // Get image dimensions
+      const img = new window.Image();
+      img.onload = () => {
+        setOriginalImgDimensions({
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+        });
+        URL.revokeObjectURL(url); // Clean up
+        handleScaling();
+      };
+      img.src = url;
+    } else {
+      setOriginalImgURL(null);
+      setOriginalImgDimensions(null);
+    }
+  }, [imageFile]);
+
+  React.useEffect(() => {
+    if (upscaleImgURL) {
+      // Get image dimensions
+      const img = new window.Image();
+      img.onload = () => {
+        setUpscaleImgDimensions({
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+        });
+      };
+      img.src = upscaleImgURL;
+    } else {
+      setUpscaleImgDimensions(null);
+    }
+  }, [upscaleImgURL]);
 
   React.useEffect(() => {
     setUpscaleErrorMsg(errorMsg);
@@ -104,17 +194,6 @@ export default function Upscale() {
       return () => clearTimeout(timer);
     }
   }, [errorUpscaleMsg]);
-
-  React.useEffect(() => {
-    if (imageFile) {
-      const url = URL.createObjectURL(imageFile);
-      setOriginalImgURL(url);
-      handleScaling();
-    } else {
-      setOriginalImgURL(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageFile]);
 
   return (
     <div className="w-full flex flex-col lg:flex-row lg:justify-end justify-center gap-4">
@@ -160,6 +239,19 @@ export default function Upscale() {
               ? "Your Image is being Processed..."
               : "Enhancement Complete!"}
           </h1>
+          {/* Show original image dimensions */}
+          {!upscaleLoading && originalImgDimensions && (
+            <div className="mb-2 text-gray-400 text-xs text-center">
+              Original size: {originalImgDimensions.width.toString()} ×{" "}
+              {originalImgDimensions.height} px
+            </div>
+          )}
+          {/* Show Upscaled image dimensions */}
+          {!upscaleLoading && upscaleImgDimensions && (
+            <div className="mb-2 text-gray-400 text-xs text-center">
+              Upscale size: {width} × {height} px
+            </div>
+          )}
           {upscaleLoading ? (
             ""
           ) : (

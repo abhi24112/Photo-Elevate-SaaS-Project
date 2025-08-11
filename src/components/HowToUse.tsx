@@ -34,8 +34,8 @@ function HowToUse() {
               key={item.key}
               className="space-y-1 flex flex-col lg:flex-row items-center lg:gap-x-4"
             >
-              <div className="bg-[#262829] w-[250px] sm:w-[350px] md:w-[450px] rounded-lg p-6 lg:h-[150px] lg:w-[270px]">
-                <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <div className="bg-[#262829] w-[250px] sm:w-[350px] md:w-[450px] rounded-lg p-6 lg:h-[150px] lg:w-[310px]">
+                <h3 className="text-[20px] font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   {item.heading}
                 </h3>
                 <p className="text-gray-400 text-sm">{item.para}</p>

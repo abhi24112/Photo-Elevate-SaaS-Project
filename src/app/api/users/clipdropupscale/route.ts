@@ -4,6 +4,14 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
 
+    // Debug what's being received
+    const targetWidth = formData.get("target_width");
+    const targetHeight = formData.get("target_height");
+
+    console.log(
+      `ClipDrop API request - Width: ${targetWidth}, Height: ${targetHeight}`
+    );
+
     const response = await fetch(
       "https://clipdrop-api.co/image-upscaling/v1/upscale",
       {
