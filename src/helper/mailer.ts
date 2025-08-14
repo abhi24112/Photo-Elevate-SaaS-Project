@@ -8,22 +8,49 @@ interface SendEmailParams {
   userId: string;
 }
 
-export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) => {
+export const sendEmail = async ({
+  email,
+  emailType,
+  userId,
+}: SendEmailParams) => {
+  const startTime = Date.now();
+
   try {
+    console.log("🚀 Starting email send process...");
+    console.log("📧 Email:", email);
+    console.log("📝 Email type:", emailType);
+    console.log("👤 User ID:", userId);
+    console.log("🌐 Domain:", process.env.DOMAIN);
+
+    // Log environment variables (without exposing sensitive data)
+    console.log("⚙️ SMTP Config check:", {
+      host: process.env.NODEMAILER_HOST,
+      port: process.env.NODEMAILER_PORT,
+      user: process.env.NODEMAILER_USER?.substring(0, 10) + "***",
+      hasPassword: !!process.env.NODEMAILER_PASSWORD,
+    });
+
+    console.log("🔒 Generating hashed token...");
     const hashedToken = await bcrypt.hash(userId.toString(), 10);
+    console.log("✅ Token generated:", hashedToken.substring(0, 15) + "...");
 
     if (emailType == "VERIFY") {
+      console.log("✅ Updating user with verify token...");
       await User.findByIdAndUpdate(userId, {
         verifyToken: hashedToken,
         verifyTokenExpiry: Date.now() + 3600000,
       });
+      console.log("✅ User updated with verify token");
     } else if (emailType == "RESET") {
+      console.log("🔑 Updating user with reset token...");
       await User.findByIdAndUpdate(userId, {
         forgotPasswordToken: hashedToken,
         forgotPasswordTokenExpiry: Date.now() + 3600000,
       });
+      console.log("✅ User updated with reset token");
     }
 
+    console.log("📮 Creating nodemailer transport...");
     const transport = nodemailer.createTransport({
       host: process.env.NODEMAILER_HOST,
       port: Number(process.env.NODEMAILER_PORT),
@@ -32,9 +59,9 @@ export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) =
         pass: process.env.NODEMAILER_PASSWORD,
       },
     });
+    console.log("✅ Transport created successfully");
 
     // --- Dynamic Content ---
-    // Determines the content based on the email type
     const subject =
       emailType === "VERIFY"
         ? "Verify Your Email Address"
@@ -55,6 +82,8 @@ export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) =
       emailType === "VERIFY"
         ? `${process.env.DOMAIN}/verifyemail?token=${hashedToken}`
         : `${process.env.DOMAIN}/resetpassword?token=${hashedToken}`;
+
+    console.log("🔗 Verification link created:", verificationLink);
 
     // --- Email Options Object ---
     const mailOption = {
@@ -126,12 +155,38 @@ export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) =
   `,
     };
 
+    console.log("📧 Mail options prepared:", {
+      from: mailOption.from,
+      to: mailOption.to,
+      subject: mailOption.subject,
+    });
+
+    console.log("📤 Attempting to send email...");
     const mailresponse = await transport.sendMail(mailOption);
+
+    const endTime = Date.now();
+    console.log("✅ EMAIL SENT SUCCESSFULLY!");
+    console.log("⏱️ Time taken:", endTime - startTime, "ms");
+    console.log("📊 Response details:", {
+      messageId: mailresponse.messageId,
+      accepted: mailresponse.accepted,
+      rejected: mailresponse.rejected,
+      response: mailresponse.response,
+    });
+
     return mailresponse;
   } catch (error: unknown) {
+    const endTime = Date.now();
+    console.error("❌ EMAIL SEND FAILED!");
+    console.error("⏱️ Failed after:", endTime - startTime, "ms");
+    console.error("🔥 Error details:", error);
+
     if (error instanceof Error) {
+      console.error("📝 Error message:", error.message);
+      console.error("📜 Error stack:", error.stack);
       throw new Error(error.message);
     } else {
+      console.error("❓ Unknown error type:", error);
       throw new Error("An unknown error occurred");
     }
   }
