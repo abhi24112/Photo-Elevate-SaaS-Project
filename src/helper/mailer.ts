@@ -58,7 +58,7 @@ export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) =
 
     // --- Email Options Object ---
     const mailOption = {
-      from: '"Authenitication for Photo Elevate" <noreply@photoelevate.tech>',
+      from: '"Authenitication Photo Elevate" <noreply@photoelevate.tech>',
       to: email,
       subject: subject,
       html: `
