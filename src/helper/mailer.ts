@@ -26,7 +26,7 @@ export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) =
 
     const transport = nodemailer.createTransport({
       host: process.env.NODEMAILER_HOST,
-      port: 2525,
+      port: Number(process.env.NODEMAILER_PORT),
       auth: {
         user: process.env.NODEMAILER_USER,
         pass: process.env.NODEMAILER_PASSWORD,
@@ -58,7 +58,7 @@ export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) =
 
     // --- Email Options Object ---
     const mailOption = {
-      from: '"Authenitication form Abhishek" <no-reply@abhishek.com>',
+      from: '"Authenitication for Photo Elevate" <noreply@photoelevate.tech>',
       to: email,
       subject: subject,
       html: `

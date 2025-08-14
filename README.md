@@ -44,7 +44,7 @@
 
      - `MONGODB_URI` (MongoDB connection string)
 
-   - `Nodemailer`
+   - `Brevo SMTP (Nodemailer)`
 
      - `NODEMAILER_USER`
      - `NODEMAILER_PASSWORD`

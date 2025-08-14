@@ -198,7 +198,7 @@ export const ModernNavbar = () => {
                         whileTap={{ scale: 0.95 }}
                         className="md:hidden w-full mb-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1.5 rounded-2xl text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
                       >
-                        Credits: {credits}/5
+                        Credits: {credits}
                       </motion.button>
                       <motion.button
                         onClick={logout}
