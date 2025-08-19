@@ -3,6 +3,12 @@ import React from "react";
 import { useImageStore } from "@/store/imageStore";
 import { Compare } from "./ui/compare";
 import { useHandleUpload } from "@/app/hooks/useHandleUpload";
+import {
+  upscaleImage,
+  getImageDimensions,
+  createImageURL,
+  validateImageFile,
+} from "@/app/utils/imageProcessing";
 
 export default function Upscale() {
   const imageFile = useImageStore((state) => state.imageFile);
@@ -27,168 +33,102 @@ export default function Upscale() {
   const [width, setwidth] = React.useState<number | null>(null);
   const [height, setheight] = React.useState<number | null>(null);
 
-  // Helper for ClipDrop fallback (ClipDrop's limits (between 1-4096 pixels):
-  const handleClipDropUpscale = async (imageFile: File) => {
-    const form = new FormData();
-    form.append("image_file", imageFile);
-
-    console.log("Original dimensions:", originalImgDimensions); // Debug if this is null
-
-    if (originalImgDimensions) {
-      // Calculate target dimensions (4x scaling)
-      let targetWidth = originalImgDimensions.width * 4;
-      let targetHeight = originalImgDimensions.height * 4;
-
-      // Preserve aspect ratio if either dimension exceeds 4096
-      if (targetWidth > 4096 || targetHeight > 4096) {
-        const aspectRatio =
-          originalImgDimensions.width / originalImgDimensions.height;
-
-        if (targetWidth > targetHeight) {
-          // Width is the limiting dimension
-          targetWidth = 4096;
-          targetHeight = Math.round(targetWidth / aspectRatio);
-        } else {
-          // Height is the limiting dimension
-          targetHeight = 4096;
-          targetWidth = Math.round(targetHeight * aspectRatio);
-        }
-      }
-
-      // Ensure minimum size of 1
-      targetWidth = Math.max(targetWidth, 1);
-      targetHeight = Math.max(targetHeight, 1);
-
-      console.log(`Calculated dimensions: ${targetWidth}×${targetHeight}`);
-
-      // Add dimensions to form
-      form.append("target_width", targetWidth.toString());
-      form.append("target_height", targetHeight.toString());
-
-      // Verify they were added correctly
-      console.log("FormData check:", {
-        width: form.get("target_width"),
-        height: form.get("target_height"),
-      });
-
-      // Update state for display
-      setwidth(targetWidth);
-      setheight(targetHeight);
-    }
-
-    const response = await fetch("/api/users/clipdropupscale", {
-      method: "POST",
-      body: form,
-    });
-
-    if (!response.ok) {
-      throw new Error("ClipDrop upscaling failed");
-    }
-
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
-  };
-
-  // Upscaling the images
-  const handleScaling = async () => {
-    if (!imageFile) {
+  // Process image when file is available
+  const processImage = async (file: File) => {
+    if (!file) {
       setUpscaleErrorMsg("No file is uploaded");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", imageFile);
+    // Validate file using same conditions as useHandleUpload
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      setUpscaleErrorMsg(validation.error || "Invalid file");
+      return;
+    }
 
     try {
       setUpscaleLoading(true);
       setUpscaleErrorMsg(null);
 
-      // Try your local API first
-      const response = await fetch("http://127.0.0.1:5000/upscale", {
-        method: "POST",
-        body: formData,
-      });
+      // Create original image URL
+      const originalUrl = createImageURL(file);
+      setOriginalImgURL(originalUrl);
 
-      if (!response.ok) {
-        // Try ClipDrop fallback
-        try {
-          const clipDropUrl = await handleClipDropUpscale(imageFile);
-          setUpscaleImgURL(clipDropUrl);
-          setUpscaleLoading(false);
-          return;
-        } catch {
-          setUpscaleErrorMsg("Both upscaling services failed");
-          setUpscaleLoading(false);
-          return;
+      // Get original dimensions
+      const dimensions = await getImageDimensions(originalUrl);
+      setOriginalImgDimensions(dimensions);
+
+      // Perform upscaling
+      const result = await upscaleImage(file, dimensions);
+      setUpscaleImgURL(result.url);
+      setUpscaleImgDimensions(result.dimensions);
+
+      // Calculate target dimensions for display
+      const targetWidth = dimensions.width * 4;
+      const targetHeight = dimensions.height * 4;
+
+      // Apply ClipDrop limits if needed
+      const maxDimension = 4096;
+      let displayWidth = targetWidth;
+      let displayHeight = targetHeight;
+
+      if (targetWidth > maxDimension || targetHeight > maxDimension) {
+        const aspectRatio = dimensions.width / dimensions.height;
+
+        if (targetWidth > targetHeight) {
+          displayWidth = maxDimension;
+          displayHeight = Math.round(displayWidth / aspectRatio);
+        } else {
+          displayHeight = maxDimension;
+          displayWidth = Math.round(displayHeight * aspectRatio);
         }
       }
 
-      const blob = await response.blob();
-      const imageURL = URL.createObjectURL(blob);
-      setUpscaleImgURL(imageURL);
-      setUpscaleLoading(false);
-    } catch {
-      // If fetch itself fails (e.g., server down), try ClipDrop
-      try {
-        const clipDropUrl = await handleClipDropUpscale(imageFile);
-        setUpscaleImgURL(clipDropUrl);
-      } catch {
-        setUpscaleErrorMsg("Both upscaling services failed");
-      }
-      setUpscaleLoading(false);
+      setwidth(displayWidth);
+      setheight(displayHeight);
+    } catch (error) {
+      console.error("Upscaling failed:", error);
+      setUpscaleErrorMsg(
+        error instanceof Error ? error.message : "Upscaling failed"
+      );
     } finally {
       setUpscaleLoading(false);
     }
   };
 
+  // Handle file upload with validation
+  const handleFileUpload = (file: File | null) => {
+    if (file) {
+      handleUpload(file, "/upscale");
+    }
+  };
+
+  // Process image when imageFile changes
   React.useEffect(() => {
     if (imageFile) {
-      const url = URL.createObjectURL(imageFile);
-      setOriginalImgURL(url);
-
-      // Get image dimensions
-      const img = new window.Image();
-      img.onload = () => {
-        setOriginalImgDimensions({
-          width: img.naturalWidth,
-          height: img.naturalHeight,
-        });
-        URL.revokeObjectURL(url); // Clean up
-        handleScaling();
-      };
-      img.src = url;
+      processImage(imageFile);
     } else {
+      // Reset state when no file
       setOriginalImgURL(null);
       setOriginalImgDimensions(null);
+      setUpscaleImgURL(null);
+      setUpscaleImgDimensions(null);
     }
   }, [imageFile]);
 
-  React.useEffect(() => {
-    if (upscaleImgURL) {
-      // Get image dimensions
-      const img = new window.Image();
-      img.onload = () => {
-        setUpscaleImgDimensions({
-          width: img.naturalWidth,
-          height: img.naturalHeight,
-        });
-      };
-      img.src = upscaleImgURL;
-    } else {
-      setUpscaleImgDimensions(null);
-    }
-  }, [upscaleImgURL]);
-
+  // Update error message from useHandleUpload
   React.useEffect(() => {
     setUpscaleErrorMsg(errorMsg);
   }, [errorMsg]);
 
+  // Handle error visibility
   React.useEffect(() => {
     if (errorUpscaleMsg) {
       setIsVisible(true);
       const timer = setTimeout(() => {
         setIsVisible(false);
-        setUpscaleErrorMsg(""); // Clear the error message so it doesn't reappear
+        setUpscaleErrorMsg("");
       }, 5000);
 
       return () => clearTimeout(timer);
@@ -237,28 +177,99 @@ export default function Upscale() {
           <h1 className="text-3xl mb-2">
             {upscaleLoading
               ? "Your Image is being Processed..."
-              : "Enhancement Complete!"}
+              : upscaleImgURL
+              ? "Enhancement Complete!"
+              : "Please upload the image"}
           </h1>
           {/* Show original image dimensions */}
-          {!upscaleLoading && originalImgDimensions && (
-            <div className="mb-2 text-gray-400 text-xs text-center">
-              Original size: {originalImgDimensions.width.toString()} ×{" "}
-              {originalImgDimensions.height} px
-            </div>
-          )}
-          {/* Show Upscaled image dimensions */}
-          {!upscaleLoading && upscaleImgDimensions && (
-            <div className="mb-2 text-gray-400 text-xs text-center">
-              Upscale size: {width} × {height} px
+          {!upscaleLoading && (originalImgDimensions || upscaleImgDimensions ) && (
+            <div className="gap-y-3">
+              <div className="flex-col gap-y-3">
+                <div className="flex items-center gap-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="icon icon-tabler icons-tabler-outline icon-tabler-photo text-blue-500"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M15 8h.01" />
+                    <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" />
+                    <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" />
+                    <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3" />
+                  </svg>
+                  <div className="text-xs text-gray-400">Original</div>
+                  <div className="">
+                    <div className="mt-1 inline-flex items-center gap-2 rounded-md bg-gray-800/40 px-3 py-1 text-xs font-medium text-white shadow-sm">
+                      <span className="font-semibold">
+                        {originalImgDimensions
+                          ? `${originalImgDimensions.width} × ${originalImgDimensions.height}`
+                          : "—"}
+                      </span>
+                      <span className="text-[10px] text-gray-400">px</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="icon icon-tabler icons-tabler-outline icon-tabler-photo-up text-pink-500"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M15 8h.01" />
+                    <path d="M12.5 21h-6.5a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v6.5" />
+                    <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l3.5 3.5" />
+                    <path d="M14 14l1 -1c.679 -.653 1.473 -.829 2.214 -.526" />
+                    <path d="M19 22v-6" />
+                    <path d="M22 19l-3 -3l-3 3" />
+                  </svg>
+
+                  <div className="text-xs text-gray-400">Upscaled</div>
+                  <div className="">
+                    <div className="mt-1 inline-flex items-center gap-2 rounded-md bg-gray-800/40 px-3 py-1 text-xs font-medium text-white shadow-sm">
+                      <span className="font-semibold">
+                        {upscaleImgDimensions && width && height
+                          ? `${width} × ${height}`
+                          : "—"}
+                      </span>
+                      <span className="text-[10px] text-gray-400">px</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-1 text-xs text-gray-500">
+                Sizes shown are pixel dimensions. The upscaled preview may be
+                constrained by display limits.
+              </div>
             </div>
           )}
           {upscaleLoading ? (
             ""
-          ) : (
+          ) : upscaleImgURL ? (
             <p className="text-md text-gray-500">
               Your low-resolution image is now a high-quality masterpiece.
               Download the enhanced version and experience the power of
               professional-grade AI upscaling.
+            </p>
+          ) : (
+            <p className="text-md  text-gray-500">
+              Upload your image to make it visually appealing.
             </p>
           )}
         </div>
@@ -314,7 +325,9 @@ export default function Upscale() {
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0] || null;
-                if (file) handleUpload(file, "/upscale");
+                if (file) handleFileUpload(file);
+                // Reset the input value to allow selecting the same file again
+                e.target.value = "";
               }}
             />
           </label>

@@ -24,19 +24,23 @@ export default function Upload() {
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
+      if (!isLoggedIn) {
+        router.push("/login");
+        return;
+      }
       handleUpload(file, "/upscale");
     }
-  }, []);
+  }, [isLoggedIn, router]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [],
+      "image/png": [".png"],
+      "image/jpeg": [".jpg", ".jpeg"],
     },
     multiple: false,
   });
 
-  
   React.useEffect(() => {
     setUploadErrorMsg(errorMsg);
   }, [errorMsg]);
@@ -48,7 +52,7 @@ export default function Upload() {
         setIsVisible(false);
         setUploadErrorMsg(""); // Clear the error message so it doesn't reappear
       }, 5000); // 5000 milliseconds = 5 seconds
-      
+
       return () => clearTimeout(timer); // Cleanup the timer
     }
   }, [uploadErrorMsg]);

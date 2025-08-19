@@ -44,7 +44,7 @@ export default function SignUpPage() {
 
   return (
     <main className="flex items-center justify-center min-h-[95vh] bg-[#181a1b] px-2">
-      <div className="w-full max-w-md p-8 space-y-8 bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-700">
+      <div className="w-full max-w-md px-7 py-7 space-y-8 bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-700">
         {/* --- Header --- */}
         <div className="text-center">
           <h2 className="text-2xl font-bold text-white mb-2">

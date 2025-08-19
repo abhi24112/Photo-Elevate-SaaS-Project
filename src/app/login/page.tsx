@@ -51,7 +51,6 @@ export default function LoginPage() {
         setResult(false);
         setResultMessage(responseData.message);
       }
-;
       if (responseData.success) {
         router.push("/");
       }
@@ -90,8 +89,8 @@ export default function LoginPage() {
   }, [user]);
 
   return (
-    <main className="flex items-center justify-center min-h-[95vh] bg-[#181a1b] px-2">
-      <div className="w-full max-w-md p-8 space-y-8 bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-700">
+    <main className="flex items-center w-full justify-center min-h-[95vh] bg-[#181a1b] px-2">
+      <div className="w-full max-w-md px-7 py-7 gap-x-3 space-y-8 bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-700">
         {/* --- Header --- */}
         <div className="text-center">
           <h2 className="text-2xl font-bold text-white mb-2">Welcome Back!</h2>
@@ -215,19 +214,19 @@ export default function LoginPage() {
         </div>
 
         {/* --- Signup Link --- */}
-        <div className="mt-6 flex justify-between text-sm">
+        <div className="mt-6 flex justify-between text-sm gap-3">
           <p className="text-gray-400">
-            Didn&apos;t have an Account?{" "}
+            Didn&apos;t have an Account?
             <Link
               href="/signup"
-              className="font-medium text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+              className="font-medium text-blue-400 hover:text-blue-300 hover:underline transition-colors ml-1"
             >
               Sign Up
             </Link>
           </p>
           <Link
             href="/forgotpassword"
-            className="font-medium text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+            className="text-end font-medium text-blue-400 hover:text-blue-300 hover:underline transition-colors"
           >
             Forgot Your Password?
           </Link>
